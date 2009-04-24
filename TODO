@@ -1,0 +1,4 @@
+- add sql query parser SQL::Statement::Structure
+- add optional parse of request
+- add features to submit only specifics request (eg : select only, <this table> only, exclude <this table>, ...)
+
