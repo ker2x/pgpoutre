@@ -6,6 +6,11 @@ use DBI;
 use Thread::Pool;
 
 
+my $regcommand = "SELECT|DISCARD";
+my $stopword = "/.*replication.*/";
+my $sqlline;
+my $sqlcommand;
+
 sub usage()
 {
 	print "--help, -?   : print this help\n";
@@ -72,15 +77,19 @@ while(<DBFILE>)
 	chomp $_;
 	s/\n+/ /g; s/\t+/ /g;
 
-	if(/^\s*(SELECT.*)/)
-	{
+	next if(m/$stopword/i);
+	$sqlline = $_;
+	$sqlline =~ m/(\w+)\s*/;
+	$sqlcommand = $1;
+	if($sqlcommand =~ m/$regcommand/i) { 
 		$pool->job($1."\n");
 		$rcounter++;
-	}
-	if ($rcounter % 1000 == 0) 
-	{ 
-		print "requete/s = " . $rcounter / (time() - $start_time) . "\n";
-		print "pool size : ". $pool->todo ."; compteur : $rcounter \n"; 
+	
+		if ($rcounter % 1000 == 0) 
+		{ 
+			print "requete/s = " . $rcounter / (time() - $start_time) . "\n";
+			print "pool size : ". $pool->todo ."; compteur : $rcounter \n"; 
+		}
 	}
 }
 print "$rcounter\n";
