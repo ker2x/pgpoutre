@@ -82,7 +82,7 @@ while(<DBFILE>)
 	$sqlline =~ m/(\w+)\s*/;
 	$sqlcommand = $1;
 	if($sqlcommand =~ m/$regcommand/i) { 
-		$pool->job($1."\n");
+		$pool->job($sqlline."\n");
 		$rcounter++;
 	
 		if ($rcounter % 1000 == 0) 
